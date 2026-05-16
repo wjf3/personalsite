@@ -50,8 +50,6 @@ function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
     if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){p=cell(px,py);hx=b.x;hy=b.y;rows[h.r][h.c]=" ";draw();b.x=px;b.y=py;spawn(hx,hy)
       if(p.c!=h.c)b.vx*=-1;if(p.r!=h.r)b.vy*=-1;if(p.c==h.c&&p.r==h.r)Math.abs(hx-(m.r.left+(h.c+.5)*m.cw))>Math.abs(hy-(m.r.top+(h.r+.5)*m.ch))?b.vx*=-1:b.vy*=-1}
     b.el.style.transform=`translate(${b.x}px,${b.y}px) translate(-50%,-50%)`}
-  for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++)if(!balls[i].dead&&!balls[j].dead&&Math.hypot(balls[i].x-balls[j].x,balls[i].y-balls[j].y)<m.cw){balls[i].dead=balls[j].dead=1;balls[i].el.remove();balls[j].el.remove()}
-  for(let i=balls.length;i--;)if(balls[i].dead)balls.splice(i,1)
   requestAnimationFrame(tick)}
 addEventListener("resize",size);size();spawn();requestAnimationFrame(tick)
 </script>
