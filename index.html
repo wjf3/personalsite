@@ -38,8 +38,8 @@ let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,t
 rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");document.body.append(tmp)
 tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
 function size(){let s=getComputedStyle(pre),r=pre.getBoundingClientRect();tmp.style.font=s.font;document.querySelectorAll("b").forEach(b=>b.style.font=s.font);m={r,cw:tmp.getBoundingClientRect().width,ch:parseFloat(s.lineHeight)||parseFloat(s.fontSize)}}
-function outside(){let x,y,i=80;do{x=innerWidth*(.05+Math.random()*.9);y=innerHeight*(.05+Math.random()*.9)}while(i--&&x>m.r.left&&x<m.r.right&&y>m.r.top&&y<m.r.bottom);return i<0?[innerWidth*.05,innerHeight*.05]:[x,y]}
-function spawn(x,y,a=Math.random()*Math.PI*2){if(x==null)[x,y]=outside();let el=document.createElement("b");el.textContent=".";document.body.append(el);balls.push({el,x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed});size()}
+function edge(){let e=Math.floor(Math.random()*4),x=e<2?Math.random()*innerWidth:e==2?0:innerWidth,y=e>1?Math.random()*innerHeight:e?innerHeight:0;return[x,y,Math.atan2(innerHeight/2-y,innerWidth/2-x)+(Math.random()-.5)]}
+function spawn(x,y,a=Math.random()*Math.PI*2){if(x==null)[x,y,a]=edge();let el=document.createElement("b");el.textContent=".";document.body.append(el);balls.push({el,x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed});size()}
 function draw(){pre.textContent=rows.map(r=>r.join("")).join("\n")}
 function cell(px,py){return{c:Math.floor((px-m.r.left)/m.cw),r:Math.floor((py-m.r.top)/m.ch)}}
 function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
