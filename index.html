@@ -5,7 +5,7 @@
   html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff}
   body{display:grid;place-items:center}
   main{width:100dvw;height:100dvh;display:grid;place-items:center;overflow:hidden;container-type:inline-size}
-  pre{margin:0;font:min(1.7cqw,4.25dvh)/1 monospace;user-select:none}
+  pre{margin:0;font:min(1.7cqw,4.25dvh)/1 monospace;user-select:none;will-change:transform}
   b{position:fixed;left:0;top:0;font:inherit;pointer-events:none;will-change:transform}
   @media (min-width:768px){main{width:min(66vw,666px)}pre{font-size:min(2cqw,4.2dvh)}}
 </style>
@@ -34,7 +34,7 @@
                               .          .</pre></main>
 <script>
 const pre=document.querySelector("pre"),tmp=document.createElement("i"),balls=[],speed=360
-let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,t=performance.now()
+let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,t=performance.now(),sx=0,sy=0,svx=0,svy=0
 rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");document.body.append(tmp)
 tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
 function size(){let s=getComputedStyle(pre),r=pre.getBoundingClientRect();tmp.style.font=s.font;document.querySelectorAll("b").forEach(b=>b.style.font=s.font);m={r,cw:tmp.getBoundingClientRect().width,ch:parseFloat(s.lineHeight)||parseFloat(s.fontSize)}}
@@ -43,11 +43,12 @@ function spawn(x,y,a=Math.random()*Math.PI*2){if(x==null)[x,y,a]=edge();let el=d
 function draw(){pre.textContent=rows.map(r=>r.join("")).join("\n")}
 function cell(px,py){return{c:Math.floor((px-m.r.left)/m.cw),r:Math.floor((py-m.r.top)/m.ch)}}
 function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
+  sx+=(svx-=sx*90*dt)*dt;sy+=(svy-=sy*90*dt)*dt;svx*=.82;svy*=.82;pre.style.transform=`translate(${sx}px,${sy}px)`
   for(let i=0,n=balls.length;i<n;i++){let b=balls[i],px=b.x,py=b.y,h,p,hx,hy;b.x+=b.vx*dt;b.y+=b.vy*dt
     if(b.x<0||b.x>innerWidth){b.vx*=-1;b.x=Math.max(0,Math.min(innerWidth,b.x))}
     if(b.y<0||b.y>innerHeight){b.vy*=-1;b.y=Math.max(0,Math.min(innerHeight,b.y))}
     h=cell(b.x,b.y)
-    if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){p=cell(px,py);hx=b.x;hy=b.y;rows[h.r][h.c]=" ";draw();b.x=px;b.y=py
+    if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){p=cell(px,py);hx=b.x;hy=b.y;svx+=b.vx*.035;svy+=b.vy*.035;rows[h.r][h.c]=" ";draw();b.x=px;b.y=py
       if(p.c!=h.c)b.vx*=-1;if(p.r!=h.r)b.vy*=-1;if(p.c==h.c&&p.r==h.r)Math.abs(hx-(m.r.left+(h.c+.5)*m.cw))>Math.abs(hy-(m.r.top+(h.r+.5)*m.ch))?b.vx*=-1:b.vy*=-1}
     b.el.style.transform=`translate(${b.x}px,${b.y}px) translate(-50%,-50%)`}
   requestAnimationFrame(tick)}
