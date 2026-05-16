@@ -37,8 +37,9 @@ const pre=document.querySelector("pre"),tmp=document.createElement("i"),balls=[]
 let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,t=performance.now()
 rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");document.body.append(tmp)
 tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
-function spawn(x=innerWidth*(.15+Math.random()*.7),y=innerHeight*(.15+Math.random()*.7),a=Math.random()*Math.PI*2){let el=document.createElement("b");el.textContent=".";document.body.append(el);balls.push({el,x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed});size()}
 function size(){let s=getComputedStyle(pre),r=pre.getBoundingClientRect();tmp.style.font=s.font;document.querySelectorAll("b").forEach(b=>b.style.font=s.font);m={r,cw:tmp.getBoundingClientRect().width,ch:parseFloat(s.lineHeight)||parseFloat(s.fontSize)}}
+function outside(){let x,y,i=80;do{x=innerWidth*(.05+Math.random()*.9);y=innerHeight*(.05+Math.random()*.9)}while(i--&&x>m.r.left&&x<m.r.right&&y>m.r.top&&y<m.r.bottom);return i<0?[innerWidth*.05,innerHeight*.05]:[x,y]}
+function spawn(x,y,a=Math.random()*Math.PI*2){if(x==null)[x,y]=outside();let el=document.createElement("b");el.textContent=".";document.body.append(el);balls.push({el,x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed});size()}
 function draw(){pre.textContent=rows.map(r=>r.join("")).join("\n")}
 function cell(px,py){return{c:Math.floor((px-m.r.left)/m.cw),r:Math.floor((py-m.r.top)/m.ch)}}
 function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
@@ -50,5 +51,5 @@ function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
       if(p.c!=h.c)b.vx*=-1;if(p.r!=h.r)b.vy*=-1;if(p.c==h.c&&p.r==h.r)Math.abs(hx-(m.r.left+(h.c+.5)*m.cw))>Math.abs(hy-(m.r.top+(h.r+.5)*m.ch))?b.vx*=-1:b.vy*=-1}
     b.el.style.transform=`translate(${b.x}px,${b.y}px) translate(-50%,-50%)`}
   requestAnimationFrame(tick)}
-addEventListener("resize",size);spawn();requestAnimationFrame(tick)
+addEventListener("resize",size);size();spawn();requestAnimationFrame(tick)
 </script>
