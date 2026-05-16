@@ -5,7 +5,8 @@
   html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff}
   body{display:grid;place-items:center}
   main{width:100dvw;height:100dvh;display:grid;place-items:center;overflow:hidden;container-type:inline-size}
-  pre{margin:0;font:min(2cqw,5dvh)/1 monospace}
+  pre{margin:0;font:min(2cqw,5dvh)/1 monospace;user-select:none}
+  b{position:fixed;left:0;top:0;font:inherit;pointer-events:none;will-change:transform}
   @media (min-width:768px){main{width:min(66vw,666px)}pre{font-size:min(2cqw,4.2dvh)}}
 </style>
 <main><pre>                               .
@@ -31,3 +32,20 @@
         .                    .=      .  .+     ..      .           :
                               :          :                         .
                               .          .</pre></main>
+<script>
+const pre=document.querySelector("pre"),tmp=document.createElement("i"),ball=document.createElement("b")
+let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,x=innerWidth*.22,y=innerHeight*.28,vx=190,vy=145,t=performance.now()
+rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");ball.textContent=".";document.body.append(ball,tmp)
+tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
+function size(){let s=getComputedStyle(pre),r=pre.getBoundingClientRect();tmp.style.font=s.font;ball.style.font=s.font;m={r,cw:tmp.getBoundingClientRect().width,ch:parseFloat(s.lineHeight)||parseFloat(s.fontSize)}}
+function draw(){pre.textContent=rows.map(r=>r.join("")).join("\n")}
+function cell(px,py){return{c:Math.floor((px-m.r.left)/m.cw),r:Math.floor((py-m.r.top)/m.ch)}}
+function tick(now){let dt=Math.min((now-t)/1e3,.03),px=x,py=y,h;t=now;x+=vx*dt;y+=vy*dt
+  if(x<0||x>innerWidth){vx*=-1;x=Math.max(0,Math.min(innerWidth,x))}
+  if(y<0||y>innerHeight){vy*=-1;y=Math.max(0,Math.min(innerHeight,y))}
+  h=cell(x,y)
+  if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){let p=cell(px,py);rows[h.r][h.c]=" ";draw();x=px;y=py
+    if(p.c!=h.c)vx*=-1;if(p.r!=h.r)vy*=-1;if(p.c==h.c&&p.r==h.r)Math.abs(x-(m.r.left+(h.c+.5)*m.cw))>Math.abs(y-(m.r.top+(h.r+.5)*m.ch))?vx*=-1:vy*=-1}
+  ball.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%)`;requestAnimationFrame(tick)}
+addEventListener("resize",size);size();requestAnimationFrame(tick)
+</script>
