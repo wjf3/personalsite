@@ -34,7 +34,7 @@
                               .          .</pre></main>
 <script>
 const pre=document.querySelector("pre"),tmp=document.createElement("i"),ball=document.createElement("b")
-let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,x=innerWidth*.22,y=innerHeight*.28,vx=190,vy=145,t=performance.now()
+let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,x=innerWidth*(.15+Math.random()*.7),y=innerHeight*(.15+Math.random()*.7),a=Math.random()*7,vx=Math.cos(a)*240,vy=Math.sin(a)*240,t=performance.now()
 rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");ball.textContent=".";document.body.append(ball,tmp)
 tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
 function size(){let s=getComputedStyle(pre),r=pre.getBoundingClientRect();tmp.style.font=s.font;ball.style.font=s.font;m={r,cw:tmp.getBoundingClientRect().width,ch:parseFloat(s.lineHeight)||parseFloat(s.fontSize)}}
