@@ -34,7 +34,7 @@
                               :          :                         .
                               .          .</pre></main>
 <script>
-const pre=document.querySelector("pre"),tmp=document.createElement("i"),balls=[],speed=360
+const pre=document.querySelector("pre"),tmp=document.createElement("i"),balls=[],speed=360,spawnEvery=5
 let rows=pre.textContent.split("\n"),cols=Math.max(...rows.map(r=>r.length)),m,t=performance.now(),sx=0,sy=0,svx=0,svy=0,hits=0
 rows=rows.map(r=>[...r.padEnd(cols," ")]);pre.textContent=rows.map(r=>r.join("")).join("\n");document.body.append(tmp)
 tmp.textContent="M";tmp.style.cssText="position:fixed;visibility:hidden"
@@ -49,7 +49,7 @@ function tick(now){let dt=Math.min((now-t)/1e3,.03);t=now
     if(b.x<0||b.x>innerWidth){b.vx*=-1;b.x=Math.max(0,Math.min(innerWidth,b.x))}
     if(b.y<0||b.y>innerHeight){b.vy*=-1;b.y=Math.max(0,Math.min(innerHeight,b.y))}
     h=cell(b.x,b.y)
-    if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){p=cell(px,py);hx=b.x;hy=b.y;svx+=b.vx*.35;svy+=b.vy*.35;rows[h.r][h.c]=" ";draw();b.x=px;b.y=py;if(++hits%5==0)spawn(hx,hy)
+    if(rows[h.r]?.[h.c]&&rows[h.r][h.c]!=" "){p=cell(px,py);hx=b.x;hy=b.y;svx+=b.vx*.35;svy+=b.vy*.35;rows[h.r][h.c]=" ";draw();b.x=px;b.y=py;if(++hits%spawnEvery==0)spawn(hx,hy)
       if(p.c!=h.c)b.vx*=-1;if(p.r!=h.r)b.vy*=-1;if(p.c==h.c&&p.r==h.r)Math.abs(hx-(m.r.left+(h.c+.5)*m.cw))>Math.abs(hy-(m.r.top+(h.r+.5)*m.ch))?b.vx*=-1:b.vy*=-1}
     b.el.style.transform=`translate(${b.x}px,${b.y}px) translate(-50%,-50%)`}
   requestAnimationFrame(tick)}
